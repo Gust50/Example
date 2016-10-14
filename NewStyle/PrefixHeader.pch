@@ -1,0 +1,48 @@
+//
+//  PrefixHeader.pch
+//  NewStyle
+//
+//  Created by 段博 on 16/9/23.
+//  Copyright © 2016年 DuanBo. All rights reserved.
+//
+
+#ifdef __OBJC__
+
+#define SCREEN_H [UIScreen mainScreen].bounds.size.height
+#define SCREEN_W [UIScreen mainScreen].bounds.size.width
+
+
+//tankWar 参数
+
+//tank宽高
+#define TANK_MODEL_W 26
+//每次移动距离
+#define MOVE_W 13
+
+//地图上边界
+#define TOP_EDGE (SCREEN_H - 26 * 12)
+
+
+//地图左边距
+#define LEFT_EDGE 26 * 5
+//地图右边距
+#define RIGHT_EDGE 26 * 17
+
+
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+
+
+
+#import <UIKit/UIKit.h>
+
+
+#import "Masonry.h"
+
+#import "Header.h"
+
+
+
+#endif /* PrefixHeader_pch */
