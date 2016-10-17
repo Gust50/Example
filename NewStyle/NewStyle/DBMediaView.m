@@ -7,14 +7,14 @@
 //
 
 #import "DBMediaView.h"
-
+#import "DBTimeChange.h"
 @interface DBMediaView()
 
 
 @property (nonatomic ,assign) float videoLength;
 
 @property (nonatomic ,assign)id timeObser ;
-
+@property (nonatomic ,assign) CMTime changedTime ;
 @end
 
 
@@ -34,13 +34,9 @@
     if (self = [super initWithFrame:frame]) {
         
          _url = url ;
-        
-        
         _someDelegate = delegate ;
         
-        UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBottomView:)];
-        [self addGestureRecognizer:tap];
-
+      
     }
     return self ;
 }
@@ -106,14 +102,9 @@
             case AVPlayerItemStatusReadyToPlay:
             {
                 _videoLength = floor(_playItem.asset.duration.value * 1.0/ _playItem.asset.duration.timescale);
-                
-                
-                
+
                 [_player play];
                 [_startBt setImage:[UIImage imageNamed:@"Media_stop"] forState:UIControlStateNormal];
-
-                
-                
                 NSLog(@"AVPlayerItemStatusReadyToPlay  视频长度-%f",_videoLength);
 
             }
@@ -144,58 +135,24 @@
 - (void)addVideoTimerObserver {
     __weak typeof (self)weak_self = self;
     _timeObser = [_player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time) {
+
+        
+        weak_self.changedTime = time ;
         float currentTimeValue = time.value*1.0/time.timescale/weak_self.videoLength;
-        NSString *currentString = [weak_self getStringFromCMTime:time];
-        NSString * totalTiemString = [weak_self getVideoLengthFromTimeLength:weak_self.videoLength];
+        NSString *currentString = [DBTimeChange getStringFromCMTime:time];
+        NSString * totalTiemString = [DBTimeChange getVideoLengthFromTimeLength:weak_self.videoLength];
+
         weak_self.slider.value = currentTimeValue ;
         weak_self.timeLebel.text = [NSString stringWithFormat:@"%@/%@",currentString,totalTiemString];
-        NSLog(@"%f",currentTimeValue);
+        NSLog(@"currentTimeValue  %f--- currentString  %lld %d",currentTimeValue ,time.value,time.timescale);
+  
     }];
 }
+
 - (void)removeVideoTimerObserver {
     NSLog(@"%@",NSStringFromSelector(_cmd));
     [_player removeTimeObserver:_timeObser];
 }
-
-
-#pragma mark - Utils
-
-- (NSString *)getStringFromCMTime:(CMTime)time
-{
-    float currentTimeValue = (CGFloat)time.value/time.timescale;//得到当前的播放时
-    
-    NSDate * currentDate = [NSDate dateWithTimeIntervalSince1970:currentTimeValue];
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSInteger unitFlags = NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond ;
-    NSDateComponents *components = [calendar components:unitFlags fromDate:currentDate];
-    
-    if (currentTimeValue >= 3600 )
-    {
-        return [NSString stringWithFormat:@"%ld:%ld:%02ld",components.hour,components.minute,components.second];
-    }
-    else
-    {
-        return [NSString stringWithFormat:@"%ld:%02ld",components.minute,components.second];
-    }
-}
-
-- (NSString *)getVideoLengthFromTimeLength:(float)timeLength
-{
-    NSDate * date = [NSDate dateWithTimeIntervalSince1970:timeLength];
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSInteger unitFlags = NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond ;
-    NSDateComponents *components = [calendar components:unitFlags fromDate:date];
-    
-    if (timeLength >= 3600 )
-    {
-        return [NSString stringWithFormat:@"%ld:%ld:%02ld",components.hour,components.minute,components.second];
-    }
-    else
-    {
-        return [NSString stringWithFormat:@"%ld:%02ld",components.minute,components.second];
-    }
-}
-
 
 #pragma mark 点击事件
 
@@ -213,20 +170,16 @@
         }];
     }
     else{
-
         [UIView animateWithDuration:0.5 animations:^{
-            
-             CGRect newFrame = _bottomView.frame ;
+            CGRect newFrame = _bottomView.frame ;
             newFrame.origin.y += 100 ;
             _bottomView.frame = newFrame ;
             
             } completion:^(BOOL finished) {
             
             _bottomView.hidden  = YES ;
-            
         }];
     }
-  
     NSLog(@"屏幕点击了");
     
 }
@@ -238,6 +191,40 @@
     }
 }
 
+
+
+
+
+#pragma mark 滑动条事件
+
+//结束拖动进度条
+-(void)sliderDragUp{
+    
+    NSLog(@"滑动了");
+
+    [_playItem seekToTime:_changedTime completionHandler:^(BOOL finished) {
+    
+        [_player play];
+        
+        // 跳转完成后
+    }];
+}
+
+//拖动进度条
+-(void)sliderValueChanged:(UISlider*)slider{
+
+    _changedTime =CMTimeMake(_changedTime.timescale * self.videoLength * self.slider.value,_changedTime.timescale);
+    NSString *currentString = [DBTimeChange getStringFromCMTime:_changedTime];
+    NSString * totalTiemString = [DBTimeChange getVideoLengthFromTimeLength:self.videoLength];
+    _timeLebel.text = [NSString stringWithFormat:@"%@/%@",currentString,totalTiemString];
+}
+
+
+//开始拖动进度条
+-(void)sliderTouchDown{
+    [_player pause];
+     NSLog(@"按下了");
+}
 
 #pragma mark 控件初始化
 -(AVPlayer*)player{
@@ -257,7 +244,12 @@
 -(AVPlayerLayer*)playerLayer{
     if (!_playerLayer) {
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-        _playerLayer.frame = CGRectMake(0, self.frame.size.height / 5, self.frame.size.width, 300) ;
+        _playerLayer.frame = CGRectMake(0, self.frame.size.height / 5, self.frame.size.width, 300) ;        
+        UIView * clearView = [[UIView alloc]initWithFrame:_playerLayer.frame];
+        clearView.backgroundColor = [UIColor clearColor];
+        UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBottomView:)];
+        [clearView addGestureRecognizer:tap];
+        [self addSubview:clearView];
     }
     return _playerLayer ;
 }
@@ -296,7 +288,10 @@
 -(UISlider*)slider{
     if (!_slider) {
         _slider = [[UISlider alloc]initWithFrame:CGRectMake(0,  20, self.frame.size.width, 10)];
-    }  
+        [_slider addTarget:self action:@selector(sliderDragUp) forControlEvents:UIControlEventTouchUpInside];
+        [_slider addTarget:self action:@selector(sliderTouchDown) forControlEvents:UIControlEventTouchDown];
+        [_slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];// 针对值变化添加响应方法
+    }
     
     return _slider ;
 }
@@ -318,12 +313,10 @@
     else if (button.selected == YES){
         [_player play];
         [_startBt setImage:[UIImage imageNamed:@"Media_stop"] forState:UIControlStateNormal];
-
     }
     button.selected = !button.selected ;
-    
-    
 }
+
 #pragma mark - release
 - (void)dealloc {
     NSLog(@"%@",NSStringFromSelector(_cmd));

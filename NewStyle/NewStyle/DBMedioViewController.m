@@ -28,9 +28,23 @@
     
     [self setUI];
     
+    
+    
+}
+-(void)setUI{
+    
+    [self setNav];
+    [self.mediaView setMedia];
     [self changeView];
     
 }
+
+
+-(void)setNav{
+    [self.navigationController setNavigationBarTitle:@"视频" withTitleColor:[UIColor whiteColor] withBarTinColor:[UIColor colorWithRed:0.07 green:0.72 blue:0.96 alpha:1] FromViewController:self];
+ 
+}
+
 
 //block回调改变旋转时坐标
 -(void)changeView{
@@ -39,7 +53,7 @@
     __weak typeof(self)weak_self = self ;
     tabbar.changeFrame = ^(BOOL isNew)
     {
-      
+        
         if (isNew) {
             [weak_self.mediaView newFrames];
         }
@@ -50,19 +64,6 @@
         
     };
 }
-
--(void)setNav{
-    [self.navigationController setNavigationBarTitle:@"视频" withTitleColor:[UIColor whiteColor] withBarTinColor:[UIColor colorWithRed:0.07 green:0.72 blue:0.96 alpha:1] FromViewController:self];
- 
-}
-
--(void)setUI{
-    
-    [self setNav];
-    [self.mediaView setMedia];
-
-}
-
 
 -(DBMediaView*)mediaView{
     if (!_mediaView) {
@@ -116,7 +117,6 @@
 {
     return NO;
 }
-
 
 - (void)judgeUIDeviceOrientation
 

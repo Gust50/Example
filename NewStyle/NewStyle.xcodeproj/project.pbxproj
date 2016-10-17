@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B18641E1DB47D4D00BE4683 /* DBTimeChange.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B18641D1DB47D4D00BE4683 /* DBTimeChange.m */; };
 		0B2C45CD1D95176000C880F4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B2C45CC1D95176000C880F4 /* main.m */; };
 		0B2C45D01D95176000C880F4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B2C45CF1D95176000C880F4 /* AppDelegate.m */; };
 		0B2C45D31D95176000C880F4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B2C45D21D95176000C880F4 /* ViewController.m */; };
@@ -55,6 +56,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B18641C1DB47D4D00BE4683 /* DBTimeChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBTimeChange.h; sourceTree = "<group>"; };
+		0B18641D1DB47D4D00BE4683 /* DBTimeChange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBTimeChange.m; sourceTree = "<group>"; };
 		0B2C45C81D95176000C880F4 /* NewStyle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewStyle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B2C45CC1D95176000C880F4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0B2C45CE1D95176000C880F4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -261,6 +264,8 @@
 				0B57CB1E1DACE1E7009A2CFF /* DBMedioViewController.m */,
 				0B57CB201DACE8AA009A2CFF /* DBMediaView.h */,
 				0B57CB211DACE8AA009A2CFF /* DBMediaView.m */,
+				0B18641C1DB47D4D00BE4683 /* DBTimeChange.h */,
+				0B18641D1DB47D4D00BE4683 /* DBTimeChange.m */,
 			);
 			name = DBWeChatController;
 			sourceTree = "<group>";
@@ -551,6 +556,7 @@
 				0B57CB1F1DACE1E7009A2CFF /* DBMedioViewController.m in Sources */,
 				0B320FAB1D9BC9ED00E8CF49 /* UILabel+selfLebel.m in Sources */,
 				0B2C46281D9913E100C880F4 /* DBLeftView.m in Sources */,
+				0B18641E1DB47D4D00BE4683 /* DBTimeChange.m in Sources */,
 				0B57CB221DACE8AA009A2CFF /* DBMediaView.m in Sources */,
 				0B2C45D31D95176000C880F4 /* ViewController.m in Sources */,
 				0B320FA21D9BC05B00E8CF49 /* DBcommonUtils.m in Sources */,
